@@ -782,13 +782,11 @@ static inline NSString* _EncodeBase64(NSString* string) {
 
 - (NSURL*)serverURL {
   if (_source4) {
-    NSString* ipAddress = _bindToLocalhost ? @"localhost" : GCDWebServerGetPrimaryIPAddress(NO);  // We can't really use IPv6 anyway as it doesn't work great with HTTP URLs in practice
-    if (ipAddress) {
-      if (_port != 80) {
-        return [NSURL URLWithString:[NSString stringWithFormat:@"http://%@:%i/", ipAddress, (int)_port]];
-      } else {
-        return [NSURL URLWithString:[NSString stringWithFormat:@"http://%@/", ipAddress]];
-      }
+    NSString* ipAddress = _bindToLocalhost ? @"localhost" : (GCDWebServerGetPrimaryIPAddress(NO) ?: @"localhost");  // We can't really use IPv6 anyway as it doesn't work great with HTTP URLs in practice
+    if (_port != 80) {
+      return [NSURL URLWithString:[NSString stringWithFormat:@"http://%@:%i/", ipAddress, (int)_port]];
+    } else {
+      return [NSURL URLWithString:[NSString stringWithFormat:@"http://%@/", ipAddress]];
     }
   }
   return nil;
